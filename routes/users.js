@@ -1,8 +1,10 @@
+const jwt = require('jsonwebtoken');
 const Joi = require('@hapi/joi');
 const bcrypt = require('bcrypt');
 const express = require('express');
 const _ = require('lodash');
 const {User,validateUser} = require('../models/users'); 
+const config  = require('config');
 const router = express.Router();
 
 async function getuserslist(req, res) {
@@ -11,6 +13,7 @@ async function getuserslist(req, res) {
 }
 
 async function registerUser(req, res){
+
     const {error} = validateUser(req.body);
     if(error) return res.status(400).send(error.details[0].message);
 
@@ -20,7 +23,21 @@ async function registerUser(req, res){
     user = new User(_.pick(req.body, ['name', 'email', 'password']));
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
+
+    const token = user.generateAuthToken();
+    user.verificationToken = token;
     await user.save();
+
+    let mailOptions = {
+        from : "webapps1542@gmail.com",
+        to : user.email,
+        subject : "Email Verification",
+        html : `<a href = ${'http://localhost:3000/api/users/' + token}>Verify</a>`
+    };
+
+    const info = await sendMail(mailOptions);
+    console.log(info);
+
     return res.send(user);
 }
 
@@ -43,9 +60,19 @@ async function login(req,res) {
     res.send('Login successful.');
 }
 
+async function verifyMail(req,res){
+    const token = req.params.id;
+    const decoded = jwt.verify(token, config.get('jwtPrivateKey'));
+    const user = User.findByIdAndUpdate(decoded._id, {active : true});
+    if ( !user ) return res.status(400).send('Invalid token.');
+    res.send(`Email verification successful!`);
+    console.log(`verify button clicked`);
+}
+
 router.get('/', getuserslist);
 router.post('/', registerUser);
 router.post('/login', login);
+router.get('/:id', verifyMail);
 
 
 module.exports = router;

@@ -8,8 +8,8 @@ const tasks = require('./routes/tasks');
 const app = express();
 
 
-if (!config.get('jwtPrivateKey')) {
-    console.error("FATAL ERROR : jwtPrivateKey is not defined");
+if (!config.get('jwtPrivateKey') || !config.get('mailPassword')) {
+    console.error("FATAL ERROR : One or more configuration variables not defined.");
     process.exit(1);
 }
 

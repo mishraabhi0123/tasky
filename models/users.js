@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const { boolean, string } = require('@hapi/joi');
 
 const userSchema = new mongoose.Schema({
-
     name : {
         type : String,
         required : true,
@@ -33,8 +33,18 @@ const userSchema = new mongoose.Schema({
     joiningDate : {
         type : Date,
         default : Date.now()
+    },
+    groupIds: {
+        type : [ mongoose.Schema.Types.ObjectId ],
+        default : [null]
+    },
+    active : {
+        type : Boolean,
+        default : false
+    },
+    verificationToken : {
+        type : String
     }
-
 });
 
 userSchema.methods.generateAuthToken = function() {
