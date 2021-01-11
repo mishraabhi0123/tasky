@@ -1,6 +1,7 @@
 const express = require('express');
 const {Task, validateTask} = require('../models/tasks');
 const auth = require('../middlewares/auth');
+const checkAdmin = require('../middlewares/checkAdmin');
 const _ = require('lodash');
 const router = express.Router();
 
@@ -29,15 +30,18 @@ async function updateTask(req, res){
 async function addTask(req, res) {
     const {error} = validateTask(req.body);
     if (error) return res.status(400).send(error.details[0].message);
+
     const task = new Task(_.pick(req.body,['name', 'description', 'status', 'priority']));
-    task.userId = req.user._id;
+    task.createdBy = req.user._id;
+    task.groupId = req.groupId;
+
     await task.save();
     res.send(task);
 }
 
 router.get('/', auth, getTasksList);
-router.post('/', auth, addTask);
-router.delete('/:id', auth, deleteTask);
-router.put('/:id', auth, updateTask);
+router.post('/', auth, checkAdmin, addTask);
+router.delete('/:id', auth, checkAdmin, deleteTask);
+router.put('/:id', auth, checkAdmin, updateTask);
 
 module.exports = router;

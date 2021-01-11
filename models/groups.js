@@ -10,20 +10,23 @@ const groupSchema = new mongoose.Schema({
         trim : true
     },
     createdBy : {
-        type : mongoose.Schema.Types.ObjectId,
+        type : mongoose.Types.ObjectId,
         required : true
     },
     members : {
-        type : [ mongoose.Schema.Types.ObjectId ],
+        type : [ mongoose.Types.ObjectId ],
         required : true,
     },
-    roles : {
-        type : [ String ],
-        required : true
+    admins : {
+        type : [ mongoose.Types.ObjectId ]
     },
     creationDate :{
         type : Date,
         default : Date.now()
+    },
+    isPersonal : {
+        type : Boolean,
+        default : false
     }
 });
 
@@ -31,9 +34,7 @@ const Group = mongoose.model('Group', groupSchema);
 
 function validateGroup(group){
     const schema = Joi.object().keys({
-        name : Joi.string().min(3).max(256),
-        members : Joi.array().minlength(2).maxlength(100).required(),
-        roles : Joi.array().minlength(2).maxlength(100).required()
+        name : Joi.string().min(3).max(256)
     });
 
     return schema.validate(group);
