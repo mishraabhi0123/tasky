@@ -1,0 +1,15 @@
+daily task manager website 
+- Personal
+- Groups/Professional
+
+users will have a personal account
+they can manage their daily tasks
+
+they can create groups and can add people in the group
+
+every group has following types of people
+- Admins -> creates, delete, modify, mark-done group tasks
+- non-Admins -> read the tasks and its progress
+
+each task will be dependent on sub tasks that can be assigned to a particular subset of group members
+a task is mark as done only if its all sub-tasks are completed

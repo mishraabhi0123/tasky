@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 
 const userSchema = new mongoose.Schema({
-
     name : {
         type : String,
         required : true,
@@ -26,33 +25,37 @@ const userSchema = new mongoose.Schema({
         required : true,
         maxlength : 1024,
     },
-    isAdmin : {
-        type : Boolean,
-        default : false
-    },
     joiningDate : {
         type : Date,
         default : Date.now()
+    },
+    spaceId : {
+        type : mongoose.Schema.Types.ObjectId,
+        required : true
+    },
+    active : {
+        type : Boolean,
+        default : false
+    },
+    verificationToken : {
+        type : String
     }
-
 });
 
 userSchema.methods.generateAuthToken = function() {
-    const token = jwt.sign({ _id : this._id, isAdmin : this.isAdmin}, config.get('jwtPrivateKey'));
+    const token = jwt.sign({ _id : this._id, spaceId : this.spaceId}, config.get('jwtPrivateKey'));
     return token;
 }
 
 const User = mongoose.model('User', userSchema);
 
 function validateUser(user) {
-
     const schema = Joi.object().keys({
         name : Joi.string().min(3).max(256).required(),
         email : Joi.string().min(3).max(256).required().email(),
         password : Joi.string().min(4).max(20).required(),
-    })
-
-    return schema.validate(user)
+    });
+    return schema.validate(user);
 }
 
 
