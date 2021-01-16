@@ -11,7 +11,7 @@ const groupSchema = new mongoose.Schema({
     },
     createdBy : {
         type : mongoose.Types.ObjectId,
-        required : true
+        required : true,
     },
     members : {
         type : [ mongoose.Types.ObjectId ],

@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
 const jwt = require('jsonwebtoken');
 const config = require('config');
-const { boolean, string } = require('@hapi/joi');
 
 const userSchema = new mongoose.Schema({
     name : {
@@ -30,9 +29,9 @@ const userSchema = new mongoose.Schema({
         type : Date,
         default : Date.now()
     },
-    groupIds: {
-        type : [ mongoose.Schema.Types.ObjectId ],
-        default : []
+    spaceId : {
+        type : mongoose.Schema.Types.ObjectId,
+        required : true
     },
     active : {
         type : Boolean,
@@ -44,20 +43,18 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.methods.generateAuthToken = function() {
-    const token = jwt.sign({ _id : this._id, name : this.name}, config.get('jwtPrivateKey'));
+    const token = jwt.sign({ _id : this._id, spaceId : this.spaceId}, config.get('jwtPrivateKey'));
     return token;
 }
 
 const User = mongoose.model('User', userSchema);
 
 function validateUser(user) {
-
     const schema = Joi.object().keys({
         name : Joi.string().min(3).max(256).required(),
         email : Joi.string().min(3).max(256).required().email(),
         password : Joi.string().min(4).max(20).required(),
     });
-
     return schema.validate(user);
 }
 

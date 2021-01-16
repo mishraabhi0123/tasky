@@ -1,7 +1,6 @@
 
 const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
-const { number, required } = require('@hapi/joi');
 
 const taskSchema = new mongoose.Schema({
     createdBy : {
