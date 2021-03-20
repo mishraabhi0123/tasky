@@ -1,0 +1,4 @@
+{
+  "jwtPrivateKey" : "tasky_jwtPrivateKey",
+  "mailPassword" : "webapp_mail_password"
+}
