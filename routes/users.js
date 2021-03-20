@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const Joi = require('@hapi/joi');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const express = require('express');
 const _ = require('lodash');
 const config = require('config');
